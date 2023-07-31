@@ -9,12 +9,14 @@ describe("ParserControllerTests", () => {
     test("should parse the snippets successfully", async () => {
       const parserController = new ParserController(stubbedUrlString);
       expect((await parserController.parse()).length).toBe(11);
+      expect((await parserController.parse(1)).length).toBe(10);
+      expect((await parserController.parse(2)).length).toBe(1);
     });
 
     test("should return an empty array for an invalid URL", async () => {
       const failureUrlString = "https://gist.github.com/gisthubtester1000";
       const parserController = new ParserController(failureUrlString);
-      const result = await parserController.parse();
+      const result = await parserController.parse(1);
       expect(result).toEqual([]);
     });
   });

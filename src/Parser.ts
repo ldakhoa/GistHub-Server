@@ -5,26 +5,31 @@ import { User } from "./User";
 
 class ParserController {
   private readonly urlString: string;
-  private readonly cache: Cache;
+  private readonly cache: Cache | null;
 
-  constructor(urlString: string, cache: Cache = caches.default) {
+  constructor(urlString: string, cache?: Cache) {
     this.urlString = urlString;
-    this.cache = cache;
+    this.cache = cache || null;
   }
 
-  async parse(): Promise<Gist[]> {
-    let index = 1;
+  async parse(index?: number): Promise<Gist[]> {
     const gists: Gist[] = [];
 
-    while (index > 0) {
+    if (index) {
       const gistsFromUrl = await this.gistsFromUrl(index);
-
-      if (gistsFromUrl.length === 0) {
-        break;
-      }
-
       gists.push(...gistsFromUrl);
-      index += 1;
+    } else {
+      let pageIndex = 1;
+      while (pageIndex > 0) {
+        const gistsFromUrl = await this.gistsFromUrl(pageIndex);
+
+        if (gistsFromUrl.length === 0) {
+          break;
+        }
+
+        gists.push(...gistsFromUrl);
+        pageIndex++;
+      }
     }
 
     return gists;
@@ -42,7 +47,7 @@ class ParserController {
 
       // Try to fetch the response from cache
       const cacheKey = new Request(url).url;
-      const cacheResponse = await this.cache.match(cacheKey);
+      const cacheResponse = await this.cache?.match(cacheKey);
 
       if (cacheResponse) {
         const cachedGists: Gist[] = await cacheResponse.json();
@@ -72,7 +77,7 @@ class ParserController {
         cacheResponseJson,
         cacheOptions
       );
-      await this.cache.put(cacheKey, cacheResponseToCache.clone());
+      await this.cache?.put(cacheKey, cacheResponseToCache.clone());
 
       return gists;
     } catch (error) {
