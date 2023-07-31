@@ -8,11 +8,7 @@ describe("ParserControllerTests", () => {
   describe("parse", () => {
     test("should parse the snippets successfully", async () => {
       const parserController = new ParserController(stubbedUrlString);
-      const gists = await parserController.parse();
-      console.log(">> ", gists);
-
-      expect(gists.length).toBe(11);
-      // expect((await parserController.parse()).length).toBe(11);
+      expect((await parserController.parse()).length).toBe(11);
     });
 
     test("should return an empty array for an invalid URL", async () => {
