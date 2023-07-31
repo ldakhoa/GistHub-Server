@@ -15,11 +15,4 @@ app.get("/users/:username/starred", async (res) => {
   return res.json(gists);
 });
 
-// export default app;
-
-export default {
-  testEnvironment: "miniflare",
-  fetch(request: Request, env: Env, ctx: ExecutionContext) {
-    return app.fetch(request, env, ctx);
-  },
-};
+export default app;

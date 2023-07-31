@@ -5,9 +5,11 @@ import { User } from "./User";
 
 class ParserController {
   private readonly urlString: string;
+  private readonly cache: Cache;
 
-  constructor(urlString: string) {
+  constructor(urlString: string, cache: Cache = caches.default) {
     this.urlString = urlString;
+    this.cache = cache;
   }
 
   async parse(): Promise<Gist[]> {
@@ -38,6 +40,15 @@ class ParserController {
 
       console.log(`Parsing Gists from ${url}...`);
 
+      // Try to fetch the response from cache
+      const cacheKey = new Request(url).url;
+      const cacheResponse = await this.cache.match(cacheKey);
+
+      if (cacheResponse) {
+        const cachedGists: Gist[] = await cacheResponse.json();
+        return cachedGists;
+      }
+
       const response: Response = await fetch(url);
       const html = await response.text();
       const $ = cheerio.load(html);
@@ -49,6 +60,19 @@ class ParserController {
         const gist = this.gistFromSnippet($(snippet));
         gists.push(gist);
       });
+
+      // Store the response in cache
+      const cacheResponseJson = JSON.stringify(gists);
+      const cacheOptions = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+      const cacheResponseToCache = new Response(
+        cacheResponseJson,
+        cacheOptions
+      );
+      await this.cache.put(cacheKey, cacheResponseToCache.clone());
 
       return gists;
     } catch (error) {
