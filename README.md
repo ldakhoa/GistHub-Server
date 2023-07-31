@@ -2,7 +2,11 @@
 
 GistHub Server is a Node.js web server that provides the functionality of retrieving starred gists from a user on GitHub. It is built to overcome the lack of an open API for this feature.
 
+A cron job is set up in the GistHub Server to retrieve and update the starred gists. This cron job runs every 8 hours to ensure that the data parsed from the GitHub HTML is up to date and accurate.
+
 This server mainly is used by [GistHub iOS App](https://github.com/ldakhoa/gisthub).
+
+## Installation
 
 To get started, run these instructions:
 
