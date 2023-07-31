@@ -84,7 +84,6 @@ class ParserController {
 
     // Gist url
     const gistUrl = snippet.find("a[href*=gist]").first()?.attr("href");
-    console.log("Gist URL: ", gistUrl);
 
     if (gistUrl) {
       // Extract username and gist ID using regular expression
