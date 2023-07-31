@@ -96,7 +96,7 @@ class ParserController {
       .first();
     if (avatar) {
       const avatarURL = avatar.attr("src");
-      user.avatarUrl = avatarURL;
+      user.avatar_url = avatarURL;
     }
 
     // Title
@@ -122,7 +122,7 @@ class ParserController {
       if (matches && matches.length >= 3) {
         const username = matches[1];
         const gistId = matches[2];
-        user.userName = username;
+        user.login = username;
         gist.id = gistId;
       }
     }
@@ -146,7 +146,7 @@ class ParserController {
 
     // File count
     const fileCountElement = snippet
-      .find(`a[href*="/${user.userName}/${gist.id}"]`)
+      .find(`a[href*="/${user.login}/${gist.id}"]`)
       .first();
     if (fileCountElement) {
       const fileCountText = fileCountElement.text();

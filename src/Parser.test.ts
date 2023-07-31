@@ -30,8 +30,8 @@ describe("ParserControllerTests", () => {
         description: "Test paging 3",
         comments: 1,
         owner: {
-          userName: "gisthubtester",
-          avatarUrl:
+          login: "gisthubtester",
+          avatar_url:
             "https://avatars.githubusercontent.com/u/121019184?s=60&v=4",
         },
         stargazerCount: 1,
