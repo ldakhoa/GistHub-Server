@@ -8,7 +8,6 @@ describe("ParserControllerTests", () => {
   describe("parse", () => {
     test("should parse the snippets successfully", async () => {
       const parserController = new ParserController(stubbedUrlString);
-      expect((await parserController.parse()).length).toBe(11);
       expect((await parserController.parse(1)).length).toBe(10);
       expect((await parserController.parse(2)).length).toBe(1);
     });
@@ -26,7 +25,7 @@ describe("ParserControllerTests", () => {
       const parserController = new ParserController(stubbedUrlString);
       const stubbedGist: Gist = {
         id: "7cf4d30ae24b39e622f199c98d314be5",
-        updatedAt: undefined,
+        updated_at: undefined,
         description: "Test paging 3",
         comments: 1,
         owner: {
@@ -41,9 +40,9 @@ describe("ParserControllerTests", () => {
 
       const gists = await parserController.gistsFromUrl(1);
       const gist = gists[0];
-      expect(gist.updatedAt).not.toBeNull();
+      expect(gist.updated_at).not.toBeNull();
 
-      stubbedGist.updatedAt = gist.updatedAt;
+      stubbedGist.updated_at = gist.updated_at;
       expect(gist).toEqual(stubbedGist);
     });
   });

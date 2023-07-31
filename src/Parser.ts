@@ -141,7 +141,7 @@ class ParserController {
     if (lastActiveTag) {
       const lastActiveDateStr = lastActiveTag.attr("datetime") ?? "";
       const updatedAt = new Date(lastActiveDateStr);
-      gist.updatedAt = updatedAt;
+      gist.updated_at = updatedAt;
     }
 
     // File count
