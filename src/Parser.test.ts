@@ -1,8 +1,9 @@
+import { describe, expect, test } from "@jest/globals";
 import { ParserController } from "./Parser";
-import cheerio from "cheerio";
+import { Gist } from "./Gist";
 
 describe("ParserControllerTests", () => {
-  const stubbedUrlString = "https://gist.github.com/gisthubtester";
+  const stubbedUrlString = "https://gist.github.com/gisthubtester/starred";
 
   describe("parse", () => {
     test("should parse the snippets successfully", async () => {
@@ -10,19 +11,20 @@ describe("ParserControllerTests", () => {
       expect((await parserController.parse()).length).toBe(11);
     });
 
-    test("should return an empty array for an invalid URL", () => {
+    test("should return an empty array for an invalid URL", async () => {
       const failureUrlString = "https://gist.github.com/gisthubtester1000";
       const parserController = new ParserController(failureUrlString);
-      expect(parserController.parse()).toEqual([]);
+      const result = await parserController.parse();
+      expect(result).toEqual([]);
     });
   });
 
   describe("parseGistFromSnippet", () => {
-    test("should parse the gist from snippet correctly", () => {
+    test("should parse the gist from snippet correctly", async () => {
       const parserController = new ParserController(stubbedUrlString);
-      const stubbedGist = {
+      const stubbedGist: Gist = {
         id: "7cf4d30ae24b39e622f199c98d314be5",
-        updatedAt: null,
+        updatedAt: undefined,
         description: "Test paging 3",
         comments: 1,
         owner: {
@@ -35,13 +37,11 @@ describe("ParserControllerTests", () => {
         files: { "test11.md": { filename: "test11.md" } },
       };
 
-      const $ = cheerio.load(stubbedUrlString);
-      const gistSnippet = $("div.gist-snippet");
-
-      const gist = parserController.gistFromSnippet(gistSnippet);
-
+      const gists = await parserController.gistsFromUrl(1);
+      const gist = gists[0];
       expect(gist.updatedAt).not.toBeNull();
-      // stubbedGist.updatedAt = gist.updatedAt;
+
+      stubbedGist.updatedAt = gist.updatedAt;
       expect(gist).toEqual(stubbedGist);
     });
   });
@@ -54,20 +54,13 @@ describe("ParserControllerTests", () => {
       expect(parserController.buildPagingUrl(index)).not.toBeNull();
 
       const pureUrl = parserController.buildPagingUrl(index);
-      expect(pureUrl.href).toBe(stubbedUrlString);
+      expect(pureUrl).toBe(stubbedUrlString);
 
       index = 10;
       const pagingUrl = parserController.buildPagingUrl(index);
-      expect(pagingUrl.href).toBe(
-        `https://gist.github.com/gisthubtester?page=${index}`
+      expect(pagingUrl).toBe(
+        `https://gist.github.com/gisthubtester/starred?page=${index}`
       );
     });
   });
-
-  // function buildSnippet(html: string): CheerioStatic | null {
-  //   const $ = cheerio.load(html);
-  //   const gistSnippet = $("div.gist-snippet");
-
-  //   return gistSnippet.length ? gistSnippet.first() : null;
-  // }
 });

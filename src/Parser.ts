@@ -52,11 +52,9 @@ class ParserController {
 
       return gists;
     } catch (error) {
-      // TODO: Handle error
-      console.log("Error ", error);
+      console.log(error);
+      return [];
     }
-
-    return [];
   }
 
   gistFromSnippet(snippet: cheerio.Cheerio): Gist {
@@ -86,12 +84,19 @@ class ParserController {
 
     // Gist url
     const gistUrl = snippet.find("a[href*=gist]").first()?.attr("href");
+    console.log("Gist URL: ", gistUrl);
+
     if (gistUrl) {
-      const gistUrlParts = gistUrl.split("/");
-      const username = gistUrlParts[3];
-      user.userName = username;
-      const gistId = gistUrlParts[4];
-      gist.id = gistId;
+      // Extract username and gist ID using regular expression
+      const regex = /(?:\/|:\/\/gist\.github\.com\/)([^/]+)\/([^/?]+)/;
+      const matches = gistUrl.match(regex);
+
+      if (matches && matches.length >= 3) {
+        const username = matches[1];
+        const gistId = matches[2];
+        user.userName = username;
+        gist.id = gistId;
+      }
     }
 
     // Description
@@ -142,7 +147,7 @@ class ParserController {
     return gist;
   }
 
-  buildPagingUrl(index: number): string | undefined {
+  buildPagingUrl(index: number): string {
     return index >= 2 ? `${this.urlString}?page=${index}` : this.urlString;
   }
 }
