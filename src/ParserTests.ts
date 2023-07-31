@@ -1,0 +1,73 @@
+import { ParserController } from "./Parser";
+import cheerio from "cheerio";
+
+describe("ParserControllerTests", () => {
+  const stubbedUrlString = "https://gist.github.com/gisthubtester";
+
+  describe("parse", () => {
+    test("should parse the snippets successfully", async () => {
+      const parserController = new ParserController(stubbedUrlString);
+      expect((await parserController.parse()).length).toBe(11);
+    });
+
+    test("should return an empty array for an invalid URL", () => {
+      const failureUrlString = "https://gist.github.com/gisthubtester1000";
+      const parserController = new ParserController(failureUrlString);
+      expect(parserController.parse()).toEqual([]);
+    });
+  });
+
+  describe("parseGistFromSnippet", () => {
+    test("should parse the gist from snippet correctly", () => {
+      const parserController = new ParserController(stubbedUrlString);
+      const stubbedGist = {
+        id: "7cf4d30ae24b39e622f199c98d314be5",
+        updatedAt: null,
+        description: "Test paging 3",
+        comments: 1,
+        owner: {
+          userName: "gisthubtester",
+          avatarUrl:
+            "https://avatars.githubusercontent.com/u/121019184?s=60&v=4",
+        },
+        stargazerCount: 1,
+        fileCount: 1,
+        files: { "test11.md": { filename: "test11.md" } },
+      };
+
+      const $ = cheerio.load(stubbedUrlString);
+      const gistSnippet = $("div.gist-snippet");
+
+      const gist = parserController.gistFromSnippet(gistSnippet);
+
+      expect(gist.updatedAt).not.toBeNull();
+      // stubbedGist.updatedAt = gist.updatedAt;
+      expect(gist).toEqual(stubbedGist);
+    });
+  });
+
+  describe("buildPagingUrl", () => {
+    test("should build the paging URL correctly", () => {
+      const parserController = new ParserController(stubbedUrlString);
+      let index = 1;
+
+      expect(parserController.buildPagingUrl(index)).not.toBeNull();
+
+      const pureUrl = parserController.buildPagingUrl(index);
+      expect(pureUrl.href).toBe(stubbedUrlString);
+
+      index = 10;
+      const pagingUrl = parserController.buildPagingUrl(index);
+      expect(pagingUrl.href).toBe(
+        `https://gist.github.com/gisthubtester?page=${index}`
+      );
+    });
+  });
+
+  // function buildSnippet(html: string): CheerioStatic | null {
+  //   const $ = cheerio.load(html);
+  //   const gistSnippet = $("div.gist-snippet");
+
+  //   return gistSnippet.length ? gistSnippet.first() : null;
+  // }
+});
