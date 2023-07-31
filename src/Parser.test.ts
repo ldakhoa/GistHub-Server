@@ -1,4 +1,4 @@
-import { describe, expect, test } from "@jest/globals";
+import { describe, expect, test, beforeEach, jest } from "@jest/globals";
 import { ParserController } from "./Parser";
 import { Gist } from "./Gist";
 
@@ -8,7 +8,11 @@ describe("ParserControllerTests", () => {
   describe("parse", () => {
     test("should parse the snippets successfully", async () => {
       const parserController = new ParserController(stubbedUrlString);
-      expect((await parserController.parse()).length).toBe(11);
+      const gists = await parserController.parse();
+      console.log(">> ", gists);
+
+      expect(gists.length).toBe(11);
+      // expect((await parserController.parse()).length).toBe(11);
     });
 
     test("should return an empty array for an invalid URL", async () => {

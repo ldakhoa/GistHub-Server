@@ -1,5 +1,5 @@
-import axios from "axios";
-import cheerio from "cheerio";
+import type { Cheerio, Element } from "cheerio";
+import * as cheerio from "cheerio";
 import { Gist, File } from "./Gist";
 import { User } from "./User";
 
@@ -38,8 +38,8 @@ class ParserController {
 
       console.log(`Parsing Gists from ${url}...`);
 
-      const response = await axios.get(url);
-      const html = response.data;
+      const response: Response = await fetch(url);
+      const html = await response.text();
       const $ = cheerio.load(html);
       const gistSnippets = $("div.gist-snippet");
 
@@ -57,7 +57,7 @@ class ParserController {
     }
   }
 
-  gistFromSnippet(snippet: cheerio.Cheerio): Gist {
+  gistFromSnippet(snippet: Cheerio<Element>): Gist {
     const gist: Gist = {};
     const user: User = {};
 
