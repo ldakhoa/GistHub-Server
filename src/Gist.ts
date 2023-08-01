@@ -2,7 +2,7 @@ import { User } from "./User";
 
 export interface Gist {
   id?: string;
-  updated_at?: Date;
+  updated_at?: string;
   description?: string;
   comments?: number;
   owner?: User;

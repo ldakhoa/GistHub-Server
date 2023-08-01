@@ -25,7 +25,7 @@ describe("ParserControllerTests", () => {
       const parserController = new ParserController(stubbedUrlString);
       const stubbedGist: Gist = {
         id: "7cf4d30ae24b39e622f199c98d314be5",
-        updated_at: undefined,
+        updated_at: "2023-07-29T08:37:29Z",
         description: "Test paging 3",
         comments: 1,
         owner: {
@@ -42,7 +42,7 @@ describe("ParserControllerTests", () => {
       const gist = gists[0];
       expect(gist.updated_at).not.toBeNull();
 
-      stubbedGist.updated_at = gist.updated_at;
+      // stubbedGist.updated_at = gist.updated_at;
       expect(gist).toEqual(stubbedGist);
     });
   });
