@@ -142,8 +142,9 @@ class ParserController {
       const lastActiveDateStr = lastActiveTag.attr("datetime") ?? "";
       const updatedAt = new Date(lastActiveDateStr);
       // gist.updated_at = updatedAt;
-      const formattedUpdatedAt = updatedAt.toISOString();
-      // .replace(/\.\d+Z$/, "Z");
+      const formattedUpdatedAt = updatedAt
+        .toISOString()
+        .replace(/\.\d+Z$/, "Z");
       gist.updated_at = formattedUpdatedAt;
     }
 
