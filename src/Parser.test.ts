@@ -36,6 +36,9 @@ describe("ParserControllerTests", () => {
         stargazerCount: 1,
         fileCount: 1,
         files: { "test11.md": { filename: "test11.md" } },
+        fork: {
+          totalCount: 0,
+        },
       };
 
       const gists = await parserController.gistsFromUrl(1);

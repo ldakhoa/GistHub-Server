@@ -1,6 +1,6 @@
 import type { Cheerio, Element } from "cheerio";
 import * as cheerio from "cheerio";
-import { Gist, File } from "./Gist";
+import { Gist, File, Fork } from "./Gist";
 import { User } from "./User";
 
 class ParserController {
@@ -164,6 +164,17 @@ class ParserController {
       const commentCountText = commentLink.text();
       const commentCount = parseInt(commentCountText.replace(/\D/g, ""));
       gist.comments = commentCount;
+    }
+
+    // Fork count
+    const forksLink = snippet.find("a[href$=/forks]").first();
+    if (forksLink) {
+      const forkCountText = forksLink.text();
+      const forkCount = parseInt(forkCountText.replace(/\D/g, ""));
+      const fork: Fork = {
+        totalCount: forkCount,
+      };
+      gist.fork = fork;
     }
 
     // Stargazers count
