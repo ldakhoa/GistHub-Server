@@ -134,6 +134,9 @@ class ParserController {
       gist.description = description;
     }
 
+    const isUpdatedTag = snippet.find("div.color-fg-muted.f6").first().text();
+    gist.isUpdated = isUpdatedTag.includes("active") ? true : false;
+
     // Updated date
     const lastActiveTag = snippet
       .find("div.color-fg-muted.f6 relative-time[datetime]")
@@ -141,7 +144,6 @@ class ParserController {
     if (lastActiveTag) {
       const lastActiveDateStr = lastActiveTag.attr("datetime") ?? "";
       const updatedAt = new Date(lastActiveDateStr);
-      // gist.updated_at = updatedAt;
       const formattedUpdatedAt = updatedAt
         .toISOString()
         .replace(/\.\d+Z$/, "Z");

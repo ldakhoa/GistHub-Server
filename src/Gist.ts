@@ -3,6 +3,7 @@ import { User } from "./User";
 export interface Gist {
   id?: string;
   updated_at?: string;
+  isUpdated?: boolean;
   description?: string;
   comments?: number;
   owner?: User;

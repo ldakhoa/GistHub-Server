@@ -15,9 +15,12 @@ npm install
 npm run dev
 ```
 
-Once the server is running, you can retrieve starred gists from a specific user by making a GET request to the following endpoint:
+Once the server is running, you can retrieve starred gists and discover gists from a specific user by making a GET request to the following endpoint:
 ```
-GET https://127.0.0.1:8787/users/<username>/starred
+GET https://127.0.0.1:8787/users/<username>/starred?page=<index>
+GET http://127.0.0.1:8787/discover?page=<index>
+GET http://127.0.0.1:8787/discover/starred?page=<index>
+GET http://127.0.0.1:8787/discover/forked?page=<index>
 ```
 
 ## License
