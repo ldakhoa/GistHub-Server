@@ -40,4 +40,21 @@ app.get("/users/:username/starred", async (res) => {
   return res.json(gists);
 });
 
+app.get("/search", async (res) => {
+  const query = encodeURIComponent(res.req.query("q") ?? "").replace(
+    /%20/g,
+    "+"
+  ); // replace spaces with +
+
+  const page = res.req.query("p");
+  const urlString = `https://gist.github.com/search?q=${query}&ref=searchresult`;
+  const cache = caches.default;
+  const parser = new ParserController(urlString, cache);
+
+  const pageIndex = parseInt(page ?? "1");
+  const gists = await parser.parse(pageIndex);
+
+  return res.json(gists);
+});
+
 export default app;

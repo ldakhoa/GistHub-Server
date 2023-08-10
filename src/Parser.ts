@@ -193,7 +193,11 @@ class ParserController {
   }
 
   buildPagingUrl(index: number): string {
-    return index >= 2 ? `${this.urlString}?page=${index}` : this.urlString;
+    if (this.urlString.includes("/search")) {
+      return `${this.urlString}&p=${index}`;
+    } else {
+      return index >= 2 ? `${this.urlString}?page=${index}` : this.urlString;
+    }
   }
 }
 
