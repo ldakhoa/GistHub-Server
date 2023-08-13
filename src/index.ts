@@ -28,9 +28,11 @@ app.get("/discover/forked", createDiscoverRoute("forked"));
 
 app.get("/users/:username/starred", async (res) => {
   const username = res.req.param("username");
+  const direction = res.req.query("direction");
+  const sort = res.req.query("sort");
   const page = res.req.query("page");
 
-  const urlString = `https://gist.github.com/${username}/starred`;
+  const urlString = `https://gist.github.com/${username}/starred?direction=${direction}&sort=${sort}`;
   const cache = caches.default;
   const parser = new ParserController(urlString, cache);
 
