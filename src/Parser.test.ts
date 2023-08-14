@@ -2,25 +2,51 @@ import { describe, expect, test } from "@jest/globals";
 import { ParserController } from "./Parser";
 import { Gist } from "./Gist";
 import { buildUrl } from "./GistBuildUrl";
+import { SearchResultLanguage } from "./SearchResultLanguage";
 
 describe("ParserControllerTests", () => {
   const stubbedUrlString = "https://gist.github.com/gisthubtester/starred";
   const parserController = new ParserController();
 
-  describe("parse", () => {
+  describe("parseGists", () => {
     test("should parse the snippets successfully", async () => {
       const urlPageOne = buildUrl("gisthubtester/starred");
       const urlPageTwo = buildUrl("gisthubtester/starred", {
         page: "2",
       });
-      expect((await parserController.parse(urlPageOne)).length).toBe(10);
-      expect((await parserController.parse(urlPageTwo)).length).toBe(1);
+      expect((await parserController.parseGists(urlPageOne)).length).toBe(10);
+      expect((await parserController.parseGists(urlPageTwo)).length).toBe(1);
     });
 
     test("should return an empty array for an invalid URL", async () => {
       const failureUrlString = "https://gist.github.com/gisthubtester1000";
-      const result = await parserController.parse(failureUrlString);
+      const result = await parserController.parseGists(failureUrlString);
       expect(result).toEqual([]);
+    });
+  });
+
+  describe("parseSearchResultLanguages", () => {
+    test("should parse the search result languages successfully", async () => {
+      const stubbedUrl =
+        "https://gist.github.com/search?q=user%3Agisthubtester&ref=searchresults";
+
+      const result = await parserController.parseSearchResultLanguages(
+        stubbedUrl
+      );
+      expect(result.length).toBe(2);
+
+      const stubbedSearchResultLanguages: SearchResultLanguage[] = [
+        {
+          language: "Markdown",
+          count: 10,
+        },
+        {
+          language: "Swift",
+          count: 1,
+        },
+      ];
+
+      expect(result).toEqual(stubbedSearchResultLanguages);
     });
   });
 

@@ -21,7 +21,7 @@ function createDiscoverRoute(endpoint: string) {
       sort: sort,
       page: page ?? "1",
     });
-    const gists = await parserController.parse(url);
+    const gists = await parserController.parseGists(url);
 
     return res.json(gists);
   };
@@ -43,7 +43,7 @@ app.get("/users/:username/starred", async (res) => {
     page: page ?? "1",
   });
 
-  const gists = await parserController.parse(url);
+  const gists = await parserController.parseGists(url);
 
   return res.json(gists);
 });
@@ -73,9 +73,14 @@ app.get("/search", async (res) => {
     p: page ?? "1",
     ref: "searchresult",
   });
-  const gists = await parserController.parse(url);
+  const gists = await parserController.parseGists(url);
+  const languages = await parserController.parseSearchResultLanguages(url);
 
-  return res.json(gists);
+  const response = {
+    gists,
+    languages,
+  };
+  return res.json(response);
 });
 
 export default app;

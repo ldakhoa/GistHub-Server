@@ -2,6 +2,7 @@ import type { Cheerio, Element } from "cheerio";
 import * as cheerio from "cheerio";
 import { Gist, File, Fork } from "./Gist";
 import { User } from "./User";
+import { SearchResultLanguage } from "./SearchResultLanguage";
 
 class ParserController {
   private readonly cache: Cache | null;
@@ -10,13 +11,41 @@ class ParserController {
     this.cache = cache || null;
   }
 
-  async parse(url: string): Promise<Gist[]> {
+  async parseGists(url: string): Promise<Gist[]> {
     const gists: Gist[] = [];
 
     const gistsFromUrl = await this.gistsFromUrl(url);
     gists.push(...gistsFromUrl);
 
     return gists;
+  }
+
+  async parseSearchResultLanguages(
+    url: string
+  ): Promise<SearchResultLanguage[]> {
+    if (!url) {
+      return [];
+    }
+
+    const response: Response = await fetch(url);
+    const html = await response.text();
+    const $ = cheerio.load(html);
+    const languages: SearchResultLanguage[] = [];
+
+    $("ul.filter-list li").each((_, element) => {
+      const snippet = $(element);
+      const nameWithCount = snippet.find(".filter-item").text().trim();
+      const name = nameWithCount.split("\n")[1].trim();
+
+      const count = snippet.find(".count").text().trim().replace(/,/g, "");
+
+      languages.push({
+        language: name,
+        count: parseInt(count, 10),
+      });
+    });
+
+    return languages;
   }
 
   async gistsFromUrl(url: string): Promise<Gist[]> {
@@ -173,14 +202,6 @@ class ParserController {
 
     return gist;
   }
-
-  // buildPagingUrl(index: number): string {
-  //   if (this.urlString.includes("/search")) {
-  //     return `${this.urlString}&p=${index}`;
-  //   } else {
-  //     return index >= 2 ? `${this.urlString}?page=${index}` : this.urlString;
-  //   }
-  // }
 }
 
 export { ParserController };

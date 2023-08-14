@@ -10,7 +10,7 @@ export interface Gist {
   stargazerCount?: number;
   fileCount?: number;
   files?: { [filename: string]: File };
-  fork?: Fork
+  fork?: Fork;
 }
 
 export interface File {
