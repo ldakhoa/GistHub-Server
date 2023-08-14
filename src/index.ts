@@ -63,10 +63,11 @@ app.get("/search", async (res) => {
   // Least recently updated
   const sort = res.req.query("s");
   const direction = res.req.query("o");
-
   const page = res.req.query("p");
+  const language = res.req.query("l");
 
   const url = buildUrl("search", {
+    l: language,
     s: sort,
     o: direction,
     q: query,
