@@ -1,22 +1,27 @@
 import { Hono } from "hono";
 import { ParserController } from "./Parser";
 import { Gist } from "./Gist";
+import { buildUrl } from "./GistBuildUrl";
 
 const app = new Hono();
-const host = "https://gist.github.com";
+const cache = caches.default;
+const parserController = new ParserController(cache);
 
-function createDiscoverRoute(url: string) {
+function createDiscoverRoute(endpoint: string) {
   return async (res: {
     req: { query: (arg: string) => any };
     json: (arg: Gist[]) => any;
   }) => {
     const page = res.req.query("page");
-    const urlString = `${host}/${url}`;
-    const cache = caches.default;
-    const parser = new ParserController(urlString, cache);
+    const direction = res.req.query("direction");
+    const sort = res.req.query("sort");
 
-    const pageIndex = parseInt(page ?? "1");
-    const gists = await parser.parse(pageIndex);
+    const url = buildUrl(endpoint, {
+      direction: direction,
+      sort: sort,
+      page: page ?? "1",
+    });
+    const gists = await parserController.parse(url);
 
     return res.json(gists);
   };
@@ -32,12 +37,13 @@ app.get("/users/:username/starred", async (res) => {
   const sort = res.req.query("sort");
   const page = res.req.query("page");
 
-  const urlString = `https://gist.github.com/${username}/starred?direction=${direction}&sort=${sort}`;
-  const cache = caches.default;
-  const parser = new ParserController(urlString, cache);
+  const url = buildUrl(`${username}/starred`, {
+    direction: direction,
+    sort: sort,
+    page: page ?? "1",
+  });
 
-  const pageIndex = parseInt(page ?? "1");
-  const gists = await parser.parse(pageIndex);
+  const gists = await parserController.parse(url);
 
   return res.json(gists);
 });
@@ -48,13 +54,26 @@ app.get("/search", async (res) => {
     "+"
   ); // replace spaces with +
 
-  const page = res.req.query("p");
-  const urlString = `https://gist.github.com/search?q=${query}&ref=searchresult`;
-  const cache = caches.default;
-  const parser = new ParserController(urlString, cache);
+  // Sort options: s=sort, o=direction
+  // Most stars
+  // Fewest stars
+  // Most forks
+  // Fewest forks
+  // Recently updated
+  // Least recently updated
+  const sort = res.req.query("s");
+  const direction = res.req.query("o");
 
-  const pageIndex = parseInt(page ?? "1");
-  const gists = await parser.parse(pageIndex);
+  const page = res.req.query("p");
+
+  const url = buildUrl("search", {
+    s: sort,
+    o: direction,
+    q: query,
+    p: page ?? "1",
+    ref: "searchresult",
+  });
+  const gists = await parserController.parse(url);
 
   return res.json(gists);
 });

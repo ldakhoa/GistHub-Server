@@ -4,41 +4,23 @@ import { Gist, File, Fork } from "./Gist";
 import { User } from "./User";
 
 class ParserController {
-  private readonly urlString: string;
   private readonly cache: Cache | null;
 
-  constructor(urlString: string, cache?: Cache) {
-    this.urlString = urlString;
+  constructor(cache?: Cache) {
     this.cache = cache || null;
   }
 
-  async parse(index?: number): Promise<Gist[]> {
+  async parse(url: string): Promise<Gist[]> {
     const gists: Gist[] = [];
 
-    if (index) {
-      const gistsFromUrl = await this.gistsFromUrl(index);
-      gists.push(...gistsFromUrl);
-    } else {
-      let pageIndex = 1;
-      while (pageIndex > 0) {
-        const gistsFromUrl = await this.gistsFromUrl(pageIndex);
-
-        if (gistsFromUrl.length === 0) {
-          break;
-        }
-
-        gists.push(...gistsFromUrl);
-        pageIndex++;
-      }
-    }
+    const gistsFromUrl = await this.gistsFromUrl(url);
+    gists.push(...gistsFromUrl);
 
     return gists;
   }
 
-  async gistsFromUrl(index: number): Promise<Gist[]> {
+  async gistsFromUrl(url: string): Promise<Gist[]> {
     try {
-      const url = this.buildPagingUrl(index);
-
       if (!url) {
         return [];
       }
@@ -192,13 +174,13 @@ class ParserController {
     return gist;
   }
 
-  buildPagingUrl(index: number): string {
-    if (this.urlString.includes("/search")) {
-      return `${this.urlString}&p=${index}`;
-    } else {
-      return index >= 2 ? `${this.urlString}?page=${index}` : this.urlString;
-    }
-  }
+  // buildPagingUrl(index: number): string {
+  //   if (this.urlString.includes("/search")) {
+  //     return `${this.urlString}&p=${index}`;
+  //   } else {
+  //     return index >= 2 ? `${this.urlString}?page=${index}` : this.urlString;
+  //   }
+  // }
 }
 
 export { ParserController };
