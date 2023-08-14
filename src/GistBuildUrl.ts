@@ -6,11 +6,12 @@ export function buildUrl(
 ): string {
   const queryString = Object.entries(query)
     .filter(([_, value]) => value !== undefined)
-    .map(
-      ([key, value]) =>
-        `${encodeURIComponent(key)}=${encodeURIComponent(value as string)}`
-    )
+    .map(([key, value]) => `${key}=${value}`)
     .join("&");
+  // .map(
+  //   ([key, value]) =>
+  //     `${encodeURIComponent(key)}=${encodeURIComponent(value as string)}`
+  // )
 
   const url = new URL(`${host}/${path}`);
   url.search = queryString;
