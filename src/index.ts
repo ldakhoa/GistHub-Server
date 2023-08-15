@@ -44,7 +44,22 @@ app.get("/users/:username/starred", async (res) => {
   });
 
   const gists = await parserController.parseGists(url);
+  return res.json(gists);
+});
 
+app.get("/users/:username/forked", async (res) => {
+  const username = res.req.param("username");
+  const direction = res.req.query("direction");
+  const sort = res.req.query("sort");
+  const page = res.req.query("page");
+
+  const url = buildUrl(`${username}/forked`, {
+    direction: direction,
+    sort: sort,
+    page: page ?? "1",
+  });
+
+  const gists = await parserController.parseGists(url);
   return res.json(gists);
 });
 
