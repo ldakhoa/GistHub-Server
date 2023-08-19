@@ -54,6 +54,7 @@ describe("ParserControllerTests", () => {
     test("should parse the gist from snippet correctly", async () => {
       const stubbedGist: Gist = {
         id: "7cf4d30ae24b39e622f199c98d314be5",
+        url: "https://gist.github.com/gisthubtester/7cf4d30ae24b39e622f199c98d314be5",
         updated_at: "2023-07-29T08:37:29Z",
         isUpdated: false,
         description: "Test paging 3",

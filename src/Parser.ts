@@ -135,6 +135,8 @@ class ParserController {
         const gistId = matches[2];
         user.login = username;
         gist.id = gistId;
+        const url = `https://gist.github.com/${username}/${gistId}`;
+        gist.url = url;
       }
     }
 
